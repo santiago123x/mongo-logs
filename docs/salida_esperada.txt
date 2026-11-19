@@ -1,0 +1,565 @@
+
+==================== A1. INSERCIÓN - insertOne de un nuevo log ====================
+{
+  acknowledged: true,
+  insertedId: ObjectId('6af3b50915edbf853bcf0902')
+}
+
+==================== A2. SELECCIÓN - find de los logs del servicio de pagos (proyección) ====================
+[
+  {
+    fecha: ISODate('2026-11-01T08:30:00.000Z'),
+    nivel: 'ERROR',
+    endpoint: '/api/pagos/procesar',
+    codigo_http: 503,
+    tiempo_respuesta_ms: 5200
+  },
+  {
+    fecha: ISODate('2026-10-28T08:13:40.000Z'),
+    nivel: 'DEBUG',
+    endpoint: '/api/pagos/estado',
+    codigo_http: 200,
+    tiempo_respuesta_ms: 234
+  },
+  {
+    fecha: ISODate('2026-10-27T02:01:46.000Z'),
+    nivel: 'WARN',
+    endpoint: '/api/pagos/estado',
+    codigo_http: 429,
+    tiempo_respuesta_ms: 1910
+  },
+  {
+    fecha: ISODate('2026-10-26T15:11:23.000Z'),
+    nivel: 'WARN',
+    endpoint: '/api/pagos/procesar',
+    codigo_http: 201,
+    tiempo_respuesta_ms: 1290
+  },
+  {
+    fecha: ISODate('2026-10-25T15:11:59.000Z'),
+    nivel: 'WARN',
+    endpoint: '/api/pagos/estado',
+    codigo_http: 429,
+    tiempo_respuesta_ms: 1833
+  }
+]
+
+==================== A3. SELECCIÓN - findOne de un usuario ====================
+{
+  _id: 'U005',
+  nombre: 'Laura Díaz',
+  email: 'laura.diaz@correo.com',
+  ciudad: 'Bucaramanga',
+  plan: 'premium',
+  rol: 'cliente',
+  fecha_registro: ISODate('2025-05-05T00:00:00.000Z')
+}
+
+==================== A4. ACTUALIZACIÓN - updateOne: cambio de plan del usuario U005 ====================
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+{
+  _id: 'U005',
+  nombre: 'Laura Díaz',
+  plan: 'empresarial'
+}
+
+==================== A5. ACTUALIZACIÓN - updateMany: marcar los ERROR como pendientes de revisión ====================
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 17,
+  modifiedCount: 17,
+  upsertedCount: 0
+}
+
+==================== A6. ELIMINACIÓN - deleteOne del log insertado en A1 ====================
+{
+  acknowledged: true,
+  deletedCount: 1
+}
+
+==================== A7. ELIMINACIÓN - deleteMany de logs DEBUG anteriores al 5 de octubre ====================
+{
+  acknowledged: true,
+  deletedCount: 2
+}
+Logs restantes: 118
+
+==================== B1. Operadores de comparación ($gt): respuestas mayores a 2 segundos ====================
+[
+  {
+    servicio_id: 'auth',
+    endpoint: '/api/login',
+    tiempo_respuesta_ms: 4971
+  },
+  {
+    servicio_id: 'notif',
+    endpoint: '/api/notificaciones/email',
+    tiempo_respuesta_ms: 4621
+  },
+  {
+    servicio_id: 'catalogo',
+    endpoint: '/api/productos/buscar',
+    tiempo_respuesta_ms: 4423
+  },
+  {
+    servicio_id: 'catalogo',
+    endpoint: '/api/productos',
+    tiempo_respuesta_ms: 4106
+  },
+  {
+    servicio_id: 'carrito',
+    endpoint: '/api/carrito',
+    tiempo_respuesta_ms: 3986
+  }
+]
+
+==================== B2. Operadores $in y $gte/$lte: WARN o ERROR entre el 10 y el 15 de octubre ====================
+[
+  {
+    fecha: ISODate('2026-10-10T02:35:57.000Z'),
+    nivel: 'WARN',
+    servicio_id: 'envios',
+    mensaje: 'Uso de memoria superior al 80 %'
+  },
+  {
+    fecha: ISODate('2026-10-10T06:47:26.000Z'),
+    nivel: 'ERROR',
+    servicio_id: 'notif',
+    mensaje: 'Error interno del servidor'
+  },
+  {
+    fecha: ISODate('2026-10-10T09:15:41.000Z'),
+    nivel: 'ERROR',
+    servicio_id: 'auth',
+    mensaje: 'Error interno del servidor'
+  },
+  {
+    fecha: ISODate('2026-10-12T02:20:57.000Z'),
+    nivel: 'ERROR',
+    servicio_id: 'catalogo',
+    mensaje: 'Servicio externo no disponible'
+  },
+  {
+    fecha: ISODate('2026-10-12T17:54:30.000Z'),
+    nivel: 'WARN',
+    servicio_id: 'auth',
+    mensaje: 'Tiempo de respuesta elevado'
+  },
+  {
+    fecha: ISODate('2026-10-14T09:48:55.000Z'),
+    nivel: 'WARN',
+    servicio_id: 'auth',
+    mensaje: 'Tiempo de respuesta elevado'
+  },
+  {
+    fecha: ISODate('2026-10-14T17:40:16.000Z'),
+    nivel: 'ERROR',
+    servicio_id: 'auth',
+    mensaje: 'Servicio externo no disponible'
+  },
+  {
+    fecha: ISODate('2026-10-15T09:12:29.000Z'),
+    nivel: 'WARN',
+    servicio_id: 'envios',
+    mensaje: 'Tiempo de respuesta elevado'
+  }
+]
+
+==================== B3. Operadores lógicos ($or / $and): errores HTTP 5xx o lentos en pagos ====================
+[
+  {
+    servicio_id: 'catalogo',
+    codigo_http: 503,
+    tiempo_respuesta_ms: 4106
+  },
+  {
+    servicio_id: 'auth',
+    codigo_http: 502,
+    tiempo_respuesta_ms: 732
+  },
+  {
+    servicio_id: 'catalogo',
+    codigo_http: 502,
+    tiempo_respuesta_ms: 463
+  },
+  {
+    servicio_id: 'auth',
+    codigo_http: 503,
+    tiempo_respuesta_ms: 1344
+  },
+  {
+    servicio_id: 'pagos',
+    codigo_http: 429,
+    tiempo_respuesta_ms: 1910
+  },
+  {
+    servicio_id: 'pagos',
+    codigo_http: 401,
+    tiempo_respuesta_ms: 3801
+  },
+  {
+    servicio_id: 'catalogo',
+    codigo_http: 503,
+    tiempo_respuesta_ms: 4423
+  },
+  {
+    servicio_id: 'notif',
+    codigo_http: 502,
+    tiempo_respuesta_ms: 4621
+  }
+]
+
+==================== B4. Expresión regular ($regex) y campo anidado: endpoints de productos desde iOS ====================
+[
+  {
+    endpoint: '/api/productos/buscar',
+    contexto: {
+      navegador: 'Chrome',
+      sistema_operativo: 'iOS'
+    }
+  },
+  {
+    endpoint: '/api/productos',
+    contexto: {
+      navegador: 'Edge',
+      sistema_operativo: 'iOS'
+    }
+  },
+  {
+    endpoint: '/api/productos/buscar',
+    contexto: {
+      navegador: 'Safari',
+      sistema_operativo: 'iOS'
+    }
+  },
+  {
+    endpoint: '/api/productos',
+    contexto: {
+      navegador: 'Edge',
+      sistema_operativo: 'iOS'
+    }
+  },
+  {
+    endpoint: '/api/productos/buscar',
+    contexto: {
+      navegador: 'Edge',
+      sistema_operativo: 'iOS'
+    }
+  }
+]
+
+==================== B5. Arreglos ($all) y $exists: logs con etiquetas 'incidente' y 'lento' que tienen traza ====================
+[
+  {
+    servicio_id: 'auth',
+    tiempo_respuesta_ms: 2116,
+    traza: {
+      excepcion: 'ConnectionRefused'
+    }
+  },
+  {
+    servicio_id: 'notif',
+    tiempo_respuesta_ms: 1915,
+    traza: {
+      excepcion: 'NullPointerException'
+    }
+  },
+  {
+    servicio_id: 'catalogo',
+    tiempo_respuesta_ms: 4106,
+    traza: {
+      excepcion: 'NullPointerException'
+    }
+  },
+  {
+    servicio_id: 'auth',
+    tiempo_respuesta_ms: 4971,
+    traza: {
+      excepcion: 'ConnectionRefused'
+    }
+  },
+  {
+    servicio_id: 'auth',
+    tiempo_respuesta_ms: 1344,
+    traza: {
+      excepcion: 'NullPointerException'
+    }
+  }
+]
+
+==================== B6. JOIN ($lookup): errores con los datos del servicio y del usuario ====================
+[
+  {
+    fecha: ISODate('2026-10-31T05:08:22.000Z'),
+    codigo_http: 503,
+    mensaje: 'Servicio externo no disponible',
+    servicio: 'Carrito de compras',
+    equipo: 'Ventas',
+    usuario: 'Juan Molina',
+    ciudad: 'Barranquilla',
+    plan: 'premium'
+  },
+  {
+    fecha: ISODate('2026-10-30T15:57:04.000Z'),
+    codigo_http: 503,
+    mensaje: 'Tiempo de espera agotado con el proveedor',
+    servicio: 'Servicio de autenticación',
+    equipo: 'Seguridad',
+    usuario: 'Luis Gómez',
+    ciudad: 'Medellín',
+    plan: 'premium'
+  },
+  {
+    fecha: ISODate('2026-10-28T18:42:16.000Z'),
+    codigo_http: 404,
+    mensaje: 'Error interno del servidor',
+    servicio: 'Carrito de compras',
+    equipo: 'Ventas',
+    usuario: 'Tomás Ramírez',
+    ciudad: 'Medellín',
+    plan: 'empresarial'
+  },
+  {
+    fecha: ISODate('2026-10-26T03:19:07.000Z'),
+    codigo_http: 404,
+    mensaje: 'Credenciales inválidas',
+    servicio: 'Catálogo de productos',
+    equipo: 'Producto',
+    usuario: 'Luis Gómez',
+    ciudad: 'Medellín',
+    plan: 'premium'
+  },
+  {
+    fecha: ISODate('2026-10-24T14:42:14.000Z'),
+    codigo_http: 404,
+    mensaje: 'Tiempo de espera agotado con el proveedor',
+    servicio: 'Servicio de autenticación',
+    equipo: 'Seguridad',
+    usuario: 'Camila Vargas',
+    ciudad: 'Cali',
+    plan: 'premium'
+  }
+]
+
+==================== C1. CONTAR - total de logs y total de errores ====================
+Total de logs: 118
+Total de ERROR: 16
+
+==================== C2. CONTAR por grupo - cantidad de logs por nivel ====================
+[
+  {
+    _id: 'INFO',
+    cantidad: 67
+  },
+  {
+    _id: 'WARN',
+    cantidad: 19
+  },
+  {
+    _id: 'ERROR',
+    cantidad: 16
+  },
+  {
+    _id: 'DEBUG',
+    cantidad: 16
+  }
+]
+
+==================== C3. SUMAR - tiempo total de respuesta (segundos) por servicio ====================
+[
+  {
+    _id: 'auth',
+    solicitudes: 25,
+    tiempo_total_s: 19.47
+  },
+  {
+    _id: 'catalogo',
+    solicitudes: 23,
+    tiempo_total_s: 15.68
+  },
+  {
+    _id: 'notif',
+    solicitudes: 17,
+    tiempo_total_s: 15.1
+  },
+  {
+    _id: 'carrito',
+    solicitudes: 16,
+    tiempo_total_s: 12.49
+  },
+  {
+    _id: 'pagos',
+    solicitudes: 18,
+    tiempo_total_s: 11.16
+  },
+  {
+    _id: 'envios',
+    solicitudes: 19,
+    tiempo_total_s: 11.07
+  }
+]
+
+==================== C4. PROMEDIAR - tiempo promedio, mínimo y máximo por servicio ====================
+[
+  {
+    _id: 'notif',
+    minimo_ms: 85,
+    maximo_ms: 4621,
+    promedio_ms: 888.2
+  },
+  {
+    _id: 'carrito',
+    minimo_ms: 57,
+    maximo_ms: 3986,
+    promedio_ms: 780.9
+  },
+  {
+    _id: 'auth',
+    minimo_ms: 41,
+    maximo_ms: 4971,
+    promedio_ms: 778.8
+  },
+  {
+    _id: 'catalogo',
+    minimo_ms: 60,
+    maximo_ms: 4423,
+    promedio_ms: 681.7
+  },
+  {
+    _id: 'pagos',
+    minimo_ms: 51,
+    maximo_ms: 3801,
+    promedio_ms: 620
+  },
+  {
+    _id: 'envios',
+    minimo_ms: 45,
+    maximo_ms: 2151,
+    promedio_ms: 582.8
+  }
+]
+
+==================== C5. Tasa de error (%) por servicio con nombre del servicio ($lookup) ====================
+[
+  {
+    total: 25,
+    errores: 5,
+    servicio: 'Servicio de autenticación',
+    tasa_error_pct: 20
+  },
+  {
+    total: 23,
+    errores: 4,
+    servicio: 'Catálogo de productos',
+    tasa_error_pct: 17.4
+  },
+  {
+    total: 16,
+    errores: 2,
+    servicio: 'Carrito de compras',
+    tasa_error_pct: 12.5
+  },
+  {
+    total: 17,
+    errores: 2,
+    servicio: 'Notificaciones',
+    tasa_error_pct: 11.8
+  },
+  {
+    total: 19,
+    errores: 2,
+    servicio: 'Gestión de envíos',
+    tasa_error_pct: 10.5
+  },
+  {
+    total: 18,
+    errores: 1,
+    servicio: 'Pasarela de pagos',
+    tasa_error_pct: 5.6
+  }
+]
+
+==================== C6. Actividad por semana del mes (logs y tiempo promedio) ====================
+[
+  {
+    logs: 11,
+    semana: 39,
+    promedio_ms: 613
+  },
+  {
+    logs: 23,
+    semana: 40,
+    promedio_ms: 910
+  },
+  {
+    logs: 22,
+    semana: 41,
+    promedio_ms: 792
+  },
+  {
+    logs: 35,
+    semana: 42,
+    promedio_ms: 600
+  },
+  {
+    logs: 27,
+    semana: 43,
+    promedio_ms: 699
+  }
+]
+
+==================== C7. Usuarios con más eventos y su ciudad (top 5) ====================
+[
+  {
+    eventos: 11,
+    usuario: 'Tomás Ramírez',
+    ciudad: 'Medellín'
+  },
+  {
+    eventos: 10,
+    usuario: 'Ana Torres',
+    ciudad: 'Bogotá'
+  },
+  {
+    eventos: 9,
+    usuario: 'Valentina Ríos',
+    ciudad: 'Bogotá'
+  },
+  {
+    eventos: 7,
+    usuario: 'Luis Gómez',
+    ciudad: 'Medellín'
+  },
+  {
+    eventos: 6,
+    usuario: 'Juan Molina',
+    ciudad: 'Barranquilla'
+  }
+]
+
+==================== C8. Errores por tipo de excepción ====================
+[
+  {
+    _id: 'ConnectionRefused',
+    ocurrencias: 6
+  },
+  {
+    _id: 'TimeoutException',
+    ocurrencias: 5
+  },
+  {
+    _id: 'NullPointerException',
+    ocurrencias: 3
+  },
+  {
+    _id: 'AuthError',
+    ocurrencias: 2
+  }
+]
